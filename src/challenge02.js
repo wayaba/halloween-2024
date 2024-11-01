@@ -1,28 +1,29 @@
-function manufacture(gifts, materials) {
-  const possibleGifts = gifts.map((gift) => {
-    return gift.split('').every((letter) => materials.includes(letter))
-      ? gift
-      : null
-  })
-
-  return possibleGifts.filter((gift) => gift !== null)
+function battleHorde(zombies, humans) {
+  let h = 0
+  let z = 0
+  for (let i = 0; i < zombies.length; i++) {
+    const battleResult = z + Number(zombies[i]) - (h + Number(humans[i]))
+    z = h = 0
+    if (battleResult !== 0) {
+      battleResult > 0 ? (z = battleResult) : (h = Math.abs(battleResult))
+    }
+  }
+  if (z === h) return 'x'
+  return z > h ? z.toString() + 'z' : h.toString() + 'h'
 }
 
-const gifts = ['tren', 'oso', 'pelota']
-const materials = 'tronesa'
+console.log(battleHorde('321', '123')) // -> "x"
 
-console.log(manufacture(gifts, materials))
-// ["tren", "oso"]
-// 'tren' SÍ porque sus letras están en 'tronesa'
-// 'oso' SÍ porque sus letras están en 'tronesa'
-// 'pelota' NO porque sus letras NO están en 'tronesa'
+console.log(battleHorde('4598', '7682')) // -> "3z"
 
-const gifts2 = ['juego', 'puzzle']
-const materials2 = 'jlepuz'
+console.log(battleHorde('242', '334')) // -> "2h"
+// primera ronda: zombie 2 vs human 3 -> humano gana (+1)
+// segunda ronda: zombie 4 vs human 3+1 -> empate
+// tercera ronda: zombie 2 vs human 4 -> humano gana (+2)
+// resultado: "2h"
 
-console.log(manufacture(gifts2, materials2)) // ["puzzle"]
-
-const gifts3 = ['libro', 'ps5']
-const materials3 = 'psli'
-
-console.log(manufacture(gifts3, materials3)) // []
+console.log(battleHorde('444', '282')) // -> "x"
+// primera ronda: zombie 4 vs human 2 -> zombie gana (+2)
+// segunda ronda: zombie 4+2 vs human 8 -> humano gana (+2)
+// tercera ronda: zombie 4 vs human 2+2 -> empate
+// resultado: "x"
