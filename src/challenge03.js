@@ -1,35 +1,40 @@
-function findNaughtyStep(original, modified) {
-  let compA = original.length > modified.length ? modified : original
-  let compB = original.length > modified.length ? original : modified
+function findSafestPath(dream) {
+  const row = dream.length - 1
+  const col = dream[0].length - 1
 
-  const differences = compB
-    .split('')
-    .filter((step, index) => compA[index] != step)
-  return differences.length > 0 ? differences[0] : ''
+  let bestPath = Infinity
 
-  // const originalSteps = new Set(original)
-  // for (const item of modified) {
-  //   if (!originalSteps.has(item)) return item
-  // }
+  const findBest = (r, c, sum) => {
+    if (sum > bestPath) return
+    if (r === row && c === col) {
+      if (sum < bestPath) bestPath = sum
+      return
+    }
+    if (r < row) {
+      findBest(r + 1, c, sum + dream[r + 1][c])
+    }
+    if (c < col) {
+      findBest(r, c + 1, sum + dream[r][c + 1])
+    }
+  }
 
-  // const modifiedSteps = new Set(modified)
-  // for (const item of original) {
-  //   if (!modifiedSteps.has(item)) return item
-  // }
-  // return ''
+  findBest(0, 0, dream[0][0])
+
+  return bestPath
 }
-console.log(findNaughtyStep('abcd', 'bcd')) // 'e'
 
-console.log(findNaughtyStep('abcd', 'bacde')) // 'e'
+const dream = [
+  [1, 3, 1],
+  [1, 5, 1],
+  [4, 2, 1]
+]
 
-console.log(findNaughtyStep('abcd', 'abcde')) // 'e'
+console.log('bestPath: ', findSafestPath(dream)) // Devuelve 7
+// El mejor camino es:
+// [0, 0] -> 1
+// [0, 1] -> 3
+// [0, 2] -> 1
+// [1, 2] -> 1
+// [2, 2] -> 1
 
-console.log(findNaughtyStep('', 'abcde4')) // 'a'
-
-console.log(findNaughtyStep('stepfor', 'stepor')) // 'f'
-
-console.log(findNaughtyStep('abcde', 'abcde')) // ''
-
-console.log(findNaughtyStep('abcde', '')) // 'a'
-
-console.log(findNaughtyStep('', '')) // ''
+// 1 -> 3 -> 1 -> 1 -> 1 = 7
