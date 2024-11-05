@@ -1,31 +1,46 @@
-function decode(message) {
-  let prev = ''
-  message.split('').forEach((char) => {
-    if (char === ')') {
-      let endIndex = prev.lastIndexOf('(')
-      prev =
-        prev.slice(0, endIndex) +
-        prev
-          .substring(endIndex + 1)
-          .split('')
-          .reverse()
-          .join('')
-    } else {
-      prev += char
+function findTheKiller(whisper, suspects) {
+  suspects = suspects.filter((suspect) => suspect.length >= whisper.length - 1)
+  for (let i = 0; i < whisper.length; i++) {
+    if (whisper[i] === '~') continue
+    if (whisper[i] === '$') {
+      suspects = suspects.filter(
+        (suspect) => suspect.length === whisper.length - 1
+      )
+      continue
     }
-  })
-  return prev
+    suspects = suspects.filter(
+      (suspect) => suspect[i].toLowerCase() === whisper[i]
+    )
+  }
+
+  return suspects.join(',')
 }
 
-const a = decode('hola (odnum)')
-console.log(a) // hola mundo
+const whisper = 'd~~~~~a'
+const suspects = [
+  'Dracula',
+  'Freddy Krueger',
+  'Jason Voorhees',
+  'Michael Myers'
+]
 
-const b = decode('(olleh) (dlrow)!')
-console.log(b) // hello world!
+console.log(findTheKiller(whisper, suspects)) // -> 'Dracula'
 
-const c = decode('sa(u(cla)atn)s')
-console.log(c) // santaclaus
+const whisper2 = '~r~dd~'
+const suspects2 = ['Freddy', 'Freddier', 'Fredderic']
 
-// Paso a paso:
-// 1. Invertimos el anidado -> sa(ualcatn)s
-// 2. Invertimos el que queda -> santaclaus
+console.log(findTheKiller(whisper2, suspects2)) // -> 'Freddy,Freddier,Fredderic'
+
+const whisper3 = '~r~dd$'
+const suspects3 = ['Freddy', 'Freddier', 'Fredderic']
+
+console.log(findTheKiller(whisper3, suspects3)) // -> ''
+
+const whisper4 = 'mi~~def'
+const suspects4 = ['Midudev', 'Midu', 'Madeval']
+
+console.log(findTheKiller(whisper4, suspects4)) // -> ''
+
+console.log(findTheKiller('~~~~~~$', ['Pennywise', 'Leatherface', 'Agatha'])) // -> 'Agatha'
+
+console.log(findTheKiller('~~$', ['ab', 'Leatherface', 'Agatha'])) // -> 'Agatha'
